@@ -1,0 +1,13 @@
+# Ignore local workspaces
+go.work
+go.work.sum
+
+# Ignore local credentials and/or API keys
+.env
+.key
+.pem
+
+# Ignore Editor and system files
+.idea/
+.vscode/
+.DS_Store
