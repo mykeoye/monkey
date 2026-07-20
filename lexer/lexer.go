@@ -30,6 +30,15 @@ func (l *Lexer) readChar() {
 	l.readPos += 1 // advance the read cursor
 }
 
+// Peeks into the input sequence to find the next char to consume
+func (l *Lexer) peekChar() byte {
+	if l.readPos >= len(l.input) {
+		return 0 // there's no character to read EOF
+	} else {
+		return l.input[l.readPos]
+	}
+}
+
 // Returns the next token that the Lexer has eaten
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
@@ -38,7 +47,11 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tok = newToken(token.ASSIGNMENT, l.ch)
+		if l.peekChar() == '=' {
+			tok = l.makeTwoCharToken(token.EQ)
+		} else {
+			tok = newToken(token.ASSIGNMENT, l.ch)
+		}
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
 	case '(':
@@ -54,7 +67,11 @@ func (l *Lexer) NextToken() token.Token {
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
 	case '!':
-		tok = newToken(token.BANG, l.ch)
+		if l.peekChar() == '=' {
+			tok = l.makeTwoCharToken(token.NOT_EQ)
+		} else {
+			tok = newToken(token.BANG, l.ch)
+		}
 	case '<':
 		tok = newToken(token.LESS_THAN, l.ch)
 	case '>':
@@ -131,4 +148,18 @@ func (l *Lexer) eatWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
+}
+
+// Makes a two character token by consuming the next character and advancing the cursor
+func (l *Lexer) makeTwoCharToken(tokenType token.TokenType) token.Token {
+	// Get the current character read by the lexer
+	ch := l.ch
+
+	// Advance the cursor to get the next character
+	l.readChar()
+
+	// Combine both characters to form the token's literal
+	literal := string(ch) + string(l.ch)
+
+	return token.Token{Type: tokenType, Literal: literal}
 }

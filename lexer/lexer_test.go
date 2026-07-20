@@ -19,6 +19,9 @@ return true;
 } else {
 return false;
 }
+
+10 == 10;
+10 != 9;
 	`
 
 	tests := []struct {
@@ -90,10 +93,18 @@ return false;
 		{token.FALSE, "false"},
 		{token.SEMICOLON, ";"},
 		{token.RIGHT_BRACE, "}"},
+		{token.INT, "10"},
+		{token.EQ, "=="},
+		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "10"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "9"},
+		{token.SEMICOLON, ";"},
 	}
 
-	//!-/*5;
-	// 5 < 10 > 5;
+	// 10 == 10;
+	// 10 != 9;
 	l := NewLexer(input)
 
 	for i, tt := range tests {
