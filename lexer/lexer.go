@@ -8,7 +8,7 @@ import (
 type Lexer struct {
 	input   string // the stream of text to tokennize
 	pos     int    // the current position of the input cursor (points to the current char)
-	readPos int    // the postion of the read cursor (points to the char after the current)
+	readPos int    // the postion of the read cursor (points to the next character to read)
 	ch      byte   // the character under view
 }
 
@@ -53,14 +53,28 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.COMMA, l.ch)
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
+	case '!':
+		tok = newToken(token.BANG, l.ch)
+	case '<':
+		tok = newToken(token.LESS_THAN, l.ch)
+	case '>':
+		tok = newToken(token.GREATER_THAN, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
 	default:
+		// Read a full string of characters, especially useful for identifiers of varying lengths
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdentifier(tok.Literal)
 			return tok // readIdentifier already advances to the next token
+			// Reads a full string of digits
 		} else if isDigit(l.ch) {
 			tok.Literal = l.readNumber()
 			tok.Type = token.INT
