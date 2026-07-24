@@ -13,7 +13,7 @@ const PROMPT = ">> "
 func Start(reader io.Reader, writer io.Writer) {
 	scanner := bufio.NewScanner(reader)
 
-	// Loop indefinitely consuming parsing and interpreting the source code
+	// Loop indefinitely consuming, parsing and interpreting the source code
 	for {
 		fmt.Fprintf(writer, PROMPT)
 		scanned := scanner.Scan()
