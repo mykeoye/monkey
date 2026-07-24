@@ -9,7 +9,7 @@ import (
 func TestLetStatements(t *testing.T) {
 	input := `let x = 5;
 	 	let y = 10;
-		let foobar 838383;`
+		let foobar = 838383;`
 
 	// Create a lexer for tokenizing the input text
 	l := lexer.NewLexer(input)
@@ -24,7 +24,7 @@ func TestLetStatements(t *testing.T) {
 	// Check for errors while parsing
 	checkParserErrors(t, p)
 
-	if len(program.Statements) == 0 {
+	if len(program.Statements) != 3 {
 		t.Fatalf("Expected 3 statements but found %d \n", len(program.Statements))
 	}
 
@@ -41,6 +41,42 @@ func TestLetStatements(t *testing.T) {
 		// Test statement to ensure it matches our expectation
 		if !testLetStatement(t, stmt, tt.expectedIdentifier) {
 			return
+		}
+	}
+
+}
+
+func TestReturnStatement(t *testing.T) {
+	input := `return 5;
+	 	return 10;
+		return 838383;`
+
+	// Create a lexer for tokenizing the input text
+	l := lexer.NewLexer(input)
+
+	// Create a parser
+	p := NewParser(l)
+	program := p.ParseProgram()
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
+
+	// Check for errors while parsing
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 3 {
+		t.Fatalf("Expected 3 statements but found %d \n", len(program.Statements))
+	}
+
+	for _, stmt := range program.Statements {
+		returnStmt, ok := stmt.(*ast.ReturnStatement)
+		if !ok {
+			t.Errorf("Expected return statement but found %T", returnStmt)
+			continue
+		}
+
+		if returnStmt.TokenLiteral() != "return" {
+			t.Errorf("Expected a 'return' literal but got=%s", returnStmt.TokenLiteral())
 		}
 	}
 

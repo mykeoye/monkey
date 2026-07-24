@@ -56,13 +56,15 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
 }
 
 // Parses tokens to form a let statemtent AST representation. A lets statement takes
-// the form let <identifie> =  <expression>
+// the form let <identifie> = <expression>
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	letStatement := &ast.LetStatement{Token: p.curToken}
 
@@ -86,6 +88,17 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	}
 
 	return letStatement
+}
+
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	returnStmt := &ast.ReturnStatement{Token: p.curToken}
+	p.nextToken() // Advance the cursor to the next token
+
+	// Skip parsing expressions for now
+	for !p.expectPeekThenAdvance(token.SEMICOLON) {
+		p.nextToken()
+	}
+	return returnStmt
 }
 
 func (p *Parser) isCurrentTokenEq(expectedTokenType token.TokenType) bool {
