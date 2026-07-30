@@ -119,3 +119,63 @@ func (exp *ExpressionStatement) String() string {
 	}
 	return ""
 }
+
+// This struct represents integer literals in the language
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode() {}
+func (il *IntegerLiteral) TokenLiteral() string {
+	return il.Token.Literal
+}
+func (il *IntegerLiteral) String() string {
+	return il.Token.Literal
+}
+
+// Struct represents a prefix expression or expressions that havve a prefix operator
+type PrefixExpression struct {
+	Token    token.Token
+	Operator string
+	Right    Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+func (pe *PrefixExpression) TokenLiteral() string {
+	return pe.Token.Literal
+}
+func (pe *PrefixExpression) String() string {
+	var outBuf bytes.Buffer
+
+	outBuf.WriteString("(")
+	outBuf.WriteString(pe.Operator)
+	outBuf.WriteString(pe.Right.String())
+	outBuf.WriteString(")")
+
+	return outBuf.String()
+}
+
+// Struct represents an infix expression eg 6 + 6
+type InfixExpression struct {
+	Token    token.Token
+	Left     Expression
+	Operator string
+	Right    Expression
+}
+
+func (infx *InfixExpression) expressionNode() {}
+func (infx *InfixExpression) TokenLiteral() string {
+	return infx.Token.Literal
+}
+func (infx *InfixExpression) String() string {
+	var outBuf bytes.Buffer
+
+	outBuf.WriteString("(")
+	outBuf.WriteString(infx.Left.String())
+	outBuf.WriteString(infx.Operator)
+	outBuf.WriteString(infx.Right.String())
+	outBuf.WriteString(")")
+
+	return outBuf.String()
+}
